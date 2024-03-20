@@ -8,29 +8,29 @@ import (
 
 func TestNextToken(t *testing.T) {
 	input := `let five = 5;
-	let ten = 10;
-	
-	let add = fn(x, y) {
-	  x + y;
-	};
-	
-	let result = add(five, ten);
+let ten = 10;
 
-    !-/*5;
-    5 < 10 > 5;
+let add = fn(x, y) {
+  x + y;
+};
 
-    if (5 < 10) {
-        return true;
-    } else {
-        return false;
-    }
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
 
-    10 == 10;
-    10 != 9;
-    "foobar"
-    "foo bar"
-	[1, 2];
-	`
+if (5 < 10) {
+	return true;
+} else {
+	return false;
+}
+
+10 == 10;
+10 != 9;
+"foobar"
+"foo bar"
+[1, 2];
+{"foo": "bar"}
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -117,6 +117,12 @@ func TestNextToken(t *testing.T) {
 		{token.INT, "2"},
 		{token.RBRACKET, "]"},
 		{token.SEMICOLON, ";"},
+		{token.LBRACE, "{"},
+		{token.STRING, "foo"},
+		{token.COLON, ":"},
+		{token.STRING, "bar"},
+		{token.RBRACE, "}"},
+		{token.EOF, ""},
 	}
 
 	l := New(input)
