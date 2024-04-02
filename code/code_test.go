@@ -1,12 +1,10 @@
 package code
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestMake(t *testing.T) {
 	tests := []struct {
-		opcode   Opcode
+		op       Opcode
 		operands []int
 		expected []byte
 	}{
@@ -15,17 +13,17 @@ func TestMake(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		instructions := Make(tt.opcode, tt.operands...)
+		instruction := Make(tt.op, tt.operands...)
 
-		if len(instructions) != len(tt.expected) {
-			t.Errorf("instructions has wrong length. got=%d, want=%d",
-				len(instructions), len(tt.expected))
+		if len(instruction) != len(tt.expected) {
+			t.Errorf("instruction has wrong length. want=%d, got=%d",
+				len(tt.expected), len(instruction))
 		}
 
 		for i, b := range tt.expected {
-			if instructions[i] != b {
-				t.Errorf("instructions[%d] wrong. got=%d, want=%d",
-					i, instructions[i], b)
+			if instruction[i] != tt.expected[i] {
+				t.Errorf("wrong byte at pos %d. want=%d, got=%d",
+					i, b, instruction[i])
 			}
 		}
 	}
@@ -49,8 +47,8 @@ func TestInstructionsString(t *testing.T) {
 	}
 
 	if concatted.String() != expected {
-		t.Errorf("instructions wrongly formatted.\ngot=%q\nwant=%q",
-			concatted.String(), expected)
+		t.Errorf("instructions wrongly formatted.\nwant=%q\ngot=%q",
+			expected, concatted.String())
 	}
 }
 
@@ -68,7 +66,7 @@ func TestReadOperands(t *testing.T) {
 
 		def, err := Lookup(byte(tt.op))
 		if err != nil {
-			t.Fatalf("definition not found: %q", err)
+			t.Fatalf("definition not found: %q\n", err)
 		}
 
 		operandsRead, n := ReadOperands(def, instruction[1:])
@@ -78,7 +76,7 @@ func TestReadOperands(t *testing.T) {
 
 		for i, want := range tt.operands {
 			if operandsRead[i] != want {
-				t.Errorf("operand %d wrong. want=%d, got=%d", i, want, operandsRead[i])
+				t.Errorf("operand wrong. want=%d, got=%d", want, operandsRead[i])
 			}
 		}
 	}
